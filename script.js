@@ -1,35 +1,40 @@
-document.getElementById('taskForm').addEventListener('submit', function(e) {
-  e.preventDefault();
+let tasks = [];
 
-  // Get user input
-  const taskInput = document.getElementById('taskInput').value;
-  const timeInput = document.getElementById('timeInput').value;
+function addTask() {
+    const taskInput = document.getElementById('task-input');
+    const taskText = taskInput.value.trim();
 
-  // Create a new task item
-  const taskListItem = document.createElement('li');
+    if (taskText !== "") {
+        tasks.push(taskText);
+        taskInput.value = "";
+        renderTasks();
+    }
+}
 
-  // Add checkbox for completion
-  const checkbox = document.createElement('input');
-  checkbox.type = 'checkbox';
+function renderTasks() {
+    const taskList = document.getElementById('task-list');
+    taskList.innerHTML = '';
 
-  // Create the label for task
-  const taskLabel = document.createElement('label');
-  taskLabel.textContent = taskInput;
+    tasks.forEach((task, index) => {
+        const taskItem = document.createElement('li');
+        taskItem.innerHTML = `
+            ${task} 
+            <button onclick="deleteTask(${index})">Delete</button>
+            <button onclick="updateTask(${index})">Update</button>
+        `;
+        taskList.appendChild(taskItem);
+    });
+}
 
-  // Display the time
-  const timeLabel = document.createElement('span');
-  timeLabel.className = 'todo-time';
-  timeLabel.textContent = ` (Time: ${timeInput})`;
+function deleteTask(index) {
+    tasks.splice(index, 1);
+    renderTasks();
+}
 
-  // Append the elements
-  taskListItem.appendChild(checkbox);
-  taskListItem.appendChild(taskLabel);
-  taskListItem.appendChild(timeLabel);
-
-  // Add the new task to the list
-  document.getElementById('todoList').appendChild(taskListItem);
-
-  // Clear the form fields
-  document.getElementById('taskInput').value = '';
-  document.getElementById('timeInput').value = '';
-});
+function updateTask(index) {
+    const newTask = prompt("Update the task:", tasks[index]);
+    if (newTask !== null && newTask.trim() !== "") {
+        tasks[index] = newTask.trim();
+        renderTasks();
+    }
+}
